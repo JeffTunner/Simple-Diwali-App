@@ -1,0 +1,1003 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>✨ Virtual Diwali – Light, History & Firecrackers</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --gold: #ffd700;
+      --saffron: #ff9933;
+      --deep-orange: #ff6b00;
+      --maroon: #8b0000;
+      --dark: #0a0a12;
+      --cream: #fff8e7;
+      --pink: #ff6b9d;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: var(--dark);
+      color: var(--cream);
+      overflow-x: hidden;
+      min-height: 100vh;
+    }
+    /* Screens */
+    .screen {
+      position: fixed;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.8s ease;
+      z-index: 10;
+    }
+    .screen.active {
+      opacity: 1;
+      pointer-events: all;
+    }
+    /* Diya Screen */
+    #diya-screen {
+      background: radial-gradient(ellipse at center, #1a0a00 0%, #0a0a12 70%);
+    }
+    .diya-container {
+      position: relative;
+      width: 220px;
+      height: 280px;
+      cursor: pointer;
+      transition: transform 0.3s;
+    }
+    .diya-container:hover { transform: scale(1.05); }
+    .diya-svg {
+      width: 100%;
+      height: auto;
+      filter: drop-shadow(0 0 20px rgba(255, 150, 0, 0.3));
+    }
+    .flame {
+      position: absolute;
+      top: 18px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 40px;
+      height: 70px;
+      opacity: 0;
+      pointer-events: none;
+    }
+    .flame.active {
+      opacity: 1;
+      animation: flicker 0.15s infinite alternate;
+    }
+    @keyframes flicker {
+      0% { transform: translateX(-50%) scale(1) rotate(-2deg); }
+      100% { transform: translateX(-50%) scale(1.08) rotate(2deg); }
+    }
+    .instruction {
+      margin-top: 40px;
+      font-size: 1.3rem;
+      letter-spacing: 2px;
+      color: var(--gold);
+      text-align: center;
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 0.7; }
+      50% { opacity: 1; }
+    }
+    /* Welcome Screen */
+    #welcome-screen {
+      background: radial-gradient(ellipse at center, #2a1500 0%, #0a0a12 80%);
+      text-align: center;
+      padding: 20px;
+    }
+    .welcome-content h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2.5rem, 8vw, 5rem);
+      background: linear-gradient(135deg, #ffd700, #ff9933, #ff6b00);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 10px;
+      text-shadow: 0 0 40px rgba(255, 200, 0, 0.3);
+    }
+    .welcome-content p {
+      font-size: 1.2rem;
+      color: #ffcc80;
+      margin-bottom: 40px;
+      max-width: 500px;
+    }
+    .btn {
+      background: linear-gradient(135deg, var(--saffron), var(--deep-orange));
+      border: none;
+      color: white;
+      padding: 16px 40px;
+      font-size: 1.1rem;
+      font-weight: 600;
+      border-radius: 50px;
+      cursor: pointer;
+      transition: all 0.3s;
+      box-shadow: 0 8px 25px rgba(255, 107, 0, 0.4);
+      letter-spacing: 1px;
+      margin: 10px;
+    }
+    .btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 35px rgba(255, 107, 0, 0.6);
+    }
+    .btn.secondary {
+      background: transparent;
+      border: 2px solid var(--gold);
+      color: var(--gold);
+      box-shadow: none;
+    }
+    .btn.secondary:hover {
+      background: rgba(255, 215, 0, 0.1);
+    }
+    /* Main Menu */
+    #main-menu {
+      background: radial-gradient(ellipse at top, #1a0f00 0%, #0a0a12 60%);
+      gap: 30px;
+    }
+    .menu-cards {
+      display: flex;
+      gap: 30px;
+      flex-wrap: wrap;
+      justify-content: center;
+      max-width: 900px;
+      padding: 20px;
+    }
+    .menu-card {
+      background: linear-gradient(145deg, #1f1508, #120c05);
+      border: 1px solid rgba(255, 180, 50, 0.3);
+      border-radius: 20px;
+      padding: 40px 30px;
+      width: 280px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.4s;
+      position: relative;
+      overflow: hidden;
+    }
+    .menu-card::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle, rgba(255,180,0,0.08) 0%, transparent 60%);
+      opacity: 0;
+      transition: opacity 0.4s;
+    }
+    .menu-card:hover {
+      transform: translateY(-10px);
+      border-color: var(--gold);
+      box-shadow: 0 20px 40px rgba(255, 150, 0, 0.2);
+    }
+    .menu-card:hover::before { opacity: 1; }
+    .menu-card .icon {
+      font-size: 3.5rem;
+      margin-bottom: 15px;
+    }
+    .menu-card h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.5rem;
+      color: var(--gold);
+      margin-bottom: 10px;
+    }
+    .menu-card p {
+      font-size: 0.95rem;
+      color: #ccaa88;
+      line-height: 1.5;
+    }
+    /* History Section */
+    #history-section {
+      position: relative;
+      background: #0a0a12;
+      overflow-y: auto;
+      overflow-x: hidden;
+      height: 100vh;
+      z-index: 20;
+      display: none;
+    }
+    #history-section.active {
+      display: block;
+    }
+    .history-bg {
+      position: fixed;
+      inset: 0;
+      background: 
+        radial-gradient(ellipse at 20% 30%, rgba(255,100,0,0.08) 0%, transparent 50%),
+        radial-gradient(ellipse at 80% 70%, rgba(255,180,0,0.06) 0%, transparent 50%),
+        #0a0a12;
+      z-index: -1;
+    }
+    .parallax-layer {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+    }
+    .history-content {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 80px 30px 120px;
+      position: relative;
+      z-index: 2;
+    }
+    .history-header {
+      text-align: center;
+      margin-bottom: 80px;
+    }
+    .history-header h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2.2rem, 6vw, 3.5rem);
+      background: linear-gradient(135deg, #ffd700, #ff9933);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 15px;
+    }
+    .history-section-block {
+      margin-bottom: 100px;
+      opacity: 0;
+      transform: translateY(60px);
+    }
+    .history-section-block h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.8rem;
+      color: var(--gold);
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .history-section-block p {
+      font-size: 1.05rem;
+      line-height: 1.85;
+      color: #e8d5b5;
+      margin-bottom: 16px;
+    }
+    .history-section-block .highlight {
+      color: var(--saffron);
+      font-weight: 500;
+    }
+    .back-btn {
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      z-index: 100;
+      background: rgba(0,0,0,0.6);
+      border: 1px solid var(--gold);
+      color: var(--gold);
+      padding: 10px 22px;
+      border-radius: 30px;
+      cursor: pointer;
+      font-size: 0.95rem;
+      backdrop-filter: blur(8px);
+      transition: all 0.3s;
+    }
+    .back-btn:hover {
+      background: rgba(255, 180, 0, 0.15);
+    }
+    .music-toggle {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 100;
+      background: rgba(0,0,0,0.6);
+      border: 1px solid var(--gold);
+      color: var(--gold);
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 1.3rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      backdrop-filter: blur(8px);
+    }
+    /* Crackers Section */
+    #crackers-section {
+      position: fixed;
+      inset: 0;
+      background: radial-gradient(ellipse at center, #150a00 0%, #0a0a12 70%);
+      display: none;
+      flex-direction: column;
+      z-index: 20;
+      overflow: hidden;
+    }
+    #crackers-section.active {
+      display: flex;
+    }
+    .crackers-header {
+      text-align: center;
+      padding: 20px 20px 10px;
+    }
+    .crackers-header h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.8rem;
+      color: var(--gold);
+    }
+    .crackers-header p {
+      color: #ccaa88;
+      font-size: 0.95rem;
+      margin-top: 6px;
+    }
+    .cracker-select {
+      display: flex;
+      gap: 15px;
+      justify-content: center;
+      flex-wrap: wrap;
+      padding: 15px 20px;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+    .cracker-item {
+      width: 90px;
+      height: 110px;
+      background: linear-gradient(145deg, #1f1508, #120c05);
+      border: 2px solid rgba(255,180,50,0.25);
+      border-radius: 14px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      cursor: grab;
+      transition: all 0.25s;
+      user-select: none;
+      touch-action: none;
+    }
+    .cracker-item:hover, .cracker-item.selected {
+      border-color: var(--gold);
+      box-shadow: 0 0 20px rgba(255,180,0,0.3);
+      transform: scale(1.08);
+    }
+    .cracker-item:active { cursor: grabbing; }
+    .cracker-item .c-icon {
+      font-size: 2.2rem;
+      margin-bottom: 6px;
+    }
+    .cracker-item span {
+      font-size: 0.7rem;
+      color: #ddbb88;
+      text-align: center;
+      line-height: 1.2;
+    }
+    .burst-area {
+      flex: 1;
+      position: relative;
+      margin: 10px 20px 20px;
+      border: 2px dashed rgba(255,180,50,0.25);
+      border-radius: 20px;
+      background: rgba(0,0,0,0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+    .burst-area.drag-over {
+      border-color: var(--gold);
+      background: rgba(255,150,0,0.08);
+    }
+    .burst-hint {
+      color: #886644;
+      font-size: 1.1rem;
+      text-align: center;
+      pointer-events: none;
+    }
+    .placed-cracker {
+      position: absolute;
+      width: 80px;
+      height: 80px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2.8rem;
+      cursor: pointer;
+      transition: transform 0.2s;
+      z-index: 5;
+      filter: drop-shadow(0 4px 8px rgba(0,0,0,0.5));
+    }
+    .placed-cracker:hover {
+      transform: scale(1.15);
+    }
+    .placed-cracker.lighting {
+      animation: light-up 0.6s ease;
+    }
+    @keyframes light-up {
+      0% { filter: brightness(1); }
+      50% { filter: brightness(2) drop-shadow(0 0 20px orange); }
+      100% { filter: brightness(1); }
+    }
+    #blast-canvas {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 10;
+    }
+    /* Floating diyas decoration */
+    .floating-diya {
+      position: absolute;
+      font-size: 1.5rem;
+      opacity: 0.15;
+      animation: float 6s ease-in-out infinite;
+      pointer-events: none;
+    }
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-20px); }
+    }
+    /* Responsive */
+    @media (max-width: 600px) {
+      .menu-cards { gap: 16px; }
+      .menu-card { width: 100%; max-width: 320px; padding: 30px 20px; }
+      .cracker-item { width: 75px; height: 95px; }
+      .cracker-item .c-icon { font-size: 1.8rem; }
+    }
+  </style>
+</head>
+<body>
+  <!-- SCREEN 1: Light the Diya -->
+  <div id="diya-screen" class="screen active">
+    <div class="diya-container" id="diya" title="Touch to light the diya">
+      <svg class="diya-svg" viewBox="0 0 200 240" xmlns="http://www.w3.org/2000/svg">
+        <!-- Diya body -->
+        <ellipse cx="100" cy="180" rx="85" ry="30" fill="#8B4513"/>
+        <path d="M20 175 Q100 130 180 175 L170 195 Q100 230 30 195 Z" fill="#A0522D"/>
+        <ellipse cx="100" cy="175" rx="70" ry="18" fill="#CD853F"/>
+        <!-- Oil surface -->
+        <ellipse cx="100" cy="168" rx="55" ry="12" fill="#3d1f00"/>
+        <!-- Wick -->
+        <rect x="96" y="140" width="8" height="30" rx="3" fill="#2a1a00"/>
+        <!-- Decorative patterns -->
+        <circle cx="55" cy="190" r="6" fill="#FFD700" opacity="0.7"/>
+        <circle cx="145" cy="190" r="6" fill="#FFD700" opacity="0.7"/>
+        <path d="M70 200 Q100 210 130 200" stroke="#FFD700" stroke-width="2" fill="none" opacity="0.6"/>
+      </svg>
+      <!-- Flame (CSS) -->
+      <div class="flame" id="flame">
+        <svg viewBox="0 0 40 70" width="40" height="70">
+          <defs>
+            <radialGradient id="flameGrad" cx="50%" cy="80%" r="50%">
+              <stop offset="0%" stop-color="#fff8dc"/>
+              <stop offset="30%" stop-color="#ffdd44"/>
+              <stop offset="70%" stop-color="#ff8800"/>
+              <stop offset="100%" stop-color="#ff4400" stop-opacity="0"/>
+            </radialGradient>
+          </defs>
+          <ellipse cx="20" cy="50" rx="14" ry="22" fill="url(#flameGrad)"/>
+          <ellipse cx="20" cy="42" rx="8" ry="16" fill="#ffee88" opacity="0.9"/>
+          <ellipse cx="20" cy="36" rx="4" ry="10" fill="#fff" opacity="0.8"/>
+        </svg>
+      </div>
+    </div>
+    <p class="instruction">✨ Touch the Diya to Light it ✨</p>
+  </div>
+
+  <!-- SCREEN 2: Welcome -->
+  <div id="welcome-screen" class="screen">
+    <div class="welcome-content">
+      <h1>Happy Diwali!</h1>
+      <p>May the festival of lights illuminate your life with joy, prosperity and peace.<br>Shubh Deepavali 🪔</p>
+      <button class="btn" id="enter-btn">Enter Celebration</button>
+    </div>
+  </div>
+
+  <!-- SCREEN 3: Main Menu -->
+  <div id="main-menu" class="screen">
+    <h1 style="font-family:'Playfair Display',serif; font-size:2.2rem; color:var(--gold); margin-bottom:10px;">Choose Your Path</h1>
+    <p style="color:#ccaa88; margin-bottom:20px;">Explore the spirit of Diwali</p>
+    <div class="menu-cards">
+      <div class="menu-card" id="goto-history">
+        <div class="icon">📜</div>
+        <h3>History & Mythology</h3>
+        <p>Discover the ancient stories of Rama, Krishna, Lakshmi and the triumph of light over darkness with immersive animations.</p>
+      </div>
+      <div class="menu-card" id="goto-crackers">
+        <div class="icon">💥</div>
+        <h3>Virtual Firecrackers</h3>
+        <p>Pick your favourite crackers, place them, light them up and enjoy the blast with sound & dazzling animations!</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- HISTORY SECTION -->
+  <div id="history-section">
+    <div class="history-bg"></div>
+    <button class="back-btn" id="history-back">← Back</button>
+    <button class="music-toggle" id="music-toggle" title="Toggle background music">🎵</button>
+    <div class="history-content">
+      <div class="history-header">
+        <h1>The Festival of Lights</h1>
+        <p style="color:#ccaa88; font-size:1.1rem;">A journey through the timeless legends of Diwali</p>
+      </div>
+
+      <div class="history-section-block" data-speed="0.9">
+        <h2>🪔 What is Diwali?</h2>
+        <p>Diwali, also known as Deepavali, is one of the most important and widely celebrated festivals in the Indian subcontinent and among the global Indian diaspora. The name comes from the Sanskrit words <span class="highlight">Deepa</span> (lamp) and <span class="highlight">Avali</span> (row), meaning “a row of lights.”</p>
+        <p>It is a five-day festival that usually falls between mid-October and mid-November, according to the Hindu lunar calendar. At its heart, Diwali celebrates the eternal victory of light over darkness, knowledge over ignorance, and good over evil.</p>
+      </div>
+
+      <div class="history-section-block" data-speed="0.85">
+        <h2>🏹 The Return of Lord Rama</h2>
+        <p>In North India, Diwali is most closely associated with the return of <span class="highlight">Lord Rama</span> to Ayodhya after 14 years of exile.</p>
+        <p>According to the epic <span class="highlight">Ramayana</span>, Prince Rama was sent into exile by his father King Dasharatha to honour a promise made to Queen Kaikeyi. Accompanied by his devoted wife Sita and loyal brother Lakshmana, Rama lived in the forests. During this time, the demon king Ravana of Lanka abducted Sita.</p>
+        <p>With the help of Hanuman and an army of vanaras (monkey warriors), Rama crossed the ocean, defeated Ravana in a great battle, and rescued Sita. After completing the full term of exile, Rama, Sita and Lakshmana returned to Ayodhya. The people of the city illuminated every home and street with rows of earthen lamps to welcome their rightful king — a tradition that continues as the lighting of diyas on Diwali.</p>
+      </div>
+
+      <div class="history-section-block" data-speed="0.8">
+        <h2>⚔️ Krishna & the Defeat of Narakasura</h2>
+        <p>In many parts of South India, Goa, Maharashtra and Assam, the day before the main Diwali night is celebrated as <span class="highlight">Naraka Chaturdashi</span>, commemorating Lord Krishna’s victory over the demon Narakasura.</p>
+        <p>Narakasura (also called Bhaumasura) was the son of Bhudevi (Mother Earth) and Varaha, the boar avatar of Vishnu. Despite his divine origin, he grew arrogant and tyrannical. He stole the earrings of Aditi (mother of the gods), seized Varuna’s umbrella, and imprisoned 16,000 women.</p>
+        <p>Lord Krishna, accompanied by his consort Satyabhama (an incarnation of Bhudevi), attacked Narakasura’s fortress at Pragjyotishapura. After defeating the demon Mura and then Narakasura himself, Krishna liberated the captives. It is said that the dying Narakasura requested that his death be remembered with lights and celebration rather than mourning — a wish that was granted.</p>
+      </div>
+
+      <div class="history-section-block" data-speed="0.75">
+        <h2>🪷 Goddess Lakshmi & the Churning of the Ocean</h2>
+        <p>Diwali is also the night when <span class="highlight">Goddess Lakshmi</span>, the deity of wealth, prosperity and good fortune, is worshipped. According to the Puranas, during the great cosmic event known as <span class="highlight">Samudra Manthan</span> (the churning of the ocean of milk), many divine treasures emerged.</p>
+        <p>Among them was Goddess Lakshmi, who chose Lord Vishnu as her eternal consort. On Diwali night, devotees clean their homes, light diyas, and offer prayers to invite Lakshmi into their lives, believing that the goddess visits only pure and illuminated homes.</p>
+      </div>
+
+      <div class="history-section-block" data-speed="0.7">
+        <h2>📅 The Five Days of Diwali</h2>
+        <p><span class="highlight">Dhanteras</span> – The first day is dedicated to Dhanvantari, the god of Ayurveda, and to the purchase of gold, silver or new utensils for prosperity.</p>
+        <p><span class="highlight">Naraka Chaturdashi / Chhoti Diwali</span> – The second day remembers the defeat of Narakasura. People take ritual oil baths before sunrise.</p>
+        <p><span class="highlight">Lakshmi Puja</span> – The main day of Diwali. Homes are illuminated, prayers are offered to Lakshmi and Ganesha, and families gather for sweets and fireworks.</p>
+        <p><span class="highlight">Govardhan Puja / Annakut</span> – In many regions this day commemorates Krishna lifting Govardhan Hill to protect the people of Vrindavan. Mountains of food (Annakut) are offered.</p>
+        <p><span class="highlight">Bhai Dooj</span> – The final day celebrates the bond between brothers and sisters, similar to Raksha Bandhan.</p>
+      </div>
+
+      <div class="history-section-block" data-speed="0.65">
+        <h2>✨ The Eternal Message</h2>
+        <p>Beyond the stories and rituals, Diwali carries a universal message: no matter how dark the night, light will always return. Whether through the lamps of Ayodhya, the victory of Krishna, or the grace of Lakshmi, the festival reminds us to kindle the light of knowledge, compassion and hope within ourselves and share it with the world.</p>
+        <p style="text-align:center; font-size:1.3rem; color:var(--gold); margin-top:40px;">🪔 Shubh Deepavali 🪔</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- CRACKERS SECTION -->
+  <div id="crackers-section">
+    <button class="back-btn" id="crackers-back">← Back</button>
+    <div class="crackers-header">
+      <h2>💥 Virtual Firecrackers</h2>
+      <p>Drag a cracker into the area below, then tap it to light & burst!</p>
+    </div>
+    <div class="cracker-select" id="cracker-select">
+      <!-- Crackers will be injected -->
+    </div>
+    <div class="burst-area" id="burst-area">
+      <canvas id="blast-canvas"></canvas>
+      <div class="burst-hint" id="burst-hint">Drag crackers here ✨</div>
+    </div>
+  </div>
+
+  <script>
+    // ========== AUDIO ==========
+    const AudioContext = window.AudioContext || window.webkitAudioContext;
+    let audioCtx = null;
+    let bgMusic = null;
+    let musicPlaying = false;
+
+    function initAudio() {
+      if (!audioCtx) audioCtx = new AudioContext();
+    }
+
+    // Simple synthesized blast sound (reliable, no external dependency)
+    function playBlastSound(type = 'normal') {
+      initAudio();
+      const now = audioCtx.currentTime;
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      const filter = audioCtx.createBiquadFilter();
+
+      osc.connect(filter);
+      filter.connect(gain);
+      gain.connect(audioCtx.destination);
+
+      filter.type = 'lowpass';
+      filter.frequency.setValueAtTime(800, now);
+      filter.frequency.exponentialRampToValueAtTime(100, now + 0.3);
+
+      if (type === 'rocket') {
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(400, now);
+        osc.frequency.exponentialRampToValueAtTime(80, now + 0.4);
+        gain.gain.setValueAtTime(0.4, now);
+        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.5);
+        osc.start(now);
+        osc.stop(now + 0.5);
+      } else if (type === 'sparkler') {
+        // Noise-like for sparkler
+        const bufferSize = audioCtx.sampleRate * 0.8;
+        const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+        const data = buffer.getChannelData(0);
+        for (let i = 0; i < bufferSize; i++) {
+          data[i] = (Math.random() * 2 - 1) * Math.exp(-i / (bufferSize * 0.3));
+        }
+        const noise = audioCtx.createBufferSource();
+        noise.buffer = buffer;
+        const nGain = audioCtx.createGain();
+        noise.connect(nGain);
+        nGain.connect(audioCtx.destination);
+        nGain.gain.setValueAtTime(0.25, now);
+        nGain.gain.exponentialRampToValueAtTime(0.01, now + 0.8);
+        noise.start(now);
+      } else {
+        // Classic cracker bang
+        osc.type = 'square';
+        osc.frequency.setValueAtTime(150, now);
+        osc.frequency.exponentialRampToValueAtTime(40, now + 0.15);
+        gain.gain.setValueAtTime(0.5, now);
+        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.25);
+        osc.start(now);
+        osc.stop(now + 0.25);
+
+        // Add a second layer for richness
+        setTimeout(() => {
+          const osc2 = audioCtx.createOscillator();
+          const g2 = audioCtx.createGain();
+          osc2.connect(g2);
+          g2.connect(audioCtx.destination);
+          osc2.type = 'triangle';
+          osc2.frequency.value = 90;
+          g2.gain.setValueAtTime(0.3, audioCtx.currentTime);
+          g2.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.2);
+          osc2.start();
+          osc2.stop(audioCtx.currentTime + 0.2);
+        }, 30);
+      }
+    }
+
+    // Soft ambient pad for history (simple oscillator drone)
+    function startBgMusic() {
+      initAudio();
+      if (bgMusic) return;
+      const osc1 = audioCtx.createOscillator();
+      const osc2 = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      const filter = audioCtx.createBiquadFilter();
+
+      osc1.type = 'sine';
+      osc1.frequency.value = 110; // A2
+      osc2.type = 'sine';
+      osc2.frequency.value = 164.81; // E3
+      filter.type = 'lowpass';
+      filter.frequency.value = 400;
+
+      osc1.connect(filter);
+      osc2.connect(filter);
+      filter.connect(gain);
+      gain.connect(audioCtx.destination);
+      gain.gain.value = 0.04;
+
+      osc1.start();
+      osc2.start();
+      bgMusic = { osc1, osc2, gain };
+      musicPlaying = true;
+      document.getElementById('music-toggle').textContent = '🔊';
+    }
+
+    function stopBgMusic() {
+      if (bgMusic) {
+        bgMusic.osc1.stop();
+        bgMusic.osc2.stop();
+        bgMusic = null;
+      }
+      musicPlaying = false;
+      document.getElementById('music-toggle').textContent = '🎵';
+    }
+
+    // ========== SCREENS ==========
+    const diyaScreen = document.getElementById('diya-screen');
+    const welcomeScreen = document.getElementById('welcome-screen');
+    const mainMenu = document.getElementById('main-menu');
+    const historySection = document.getElementById('history-section');
+    const crackersSection = document.getElementById('crackers-section');
+
+    function showScreen(screen) {
+      [diyaScreen, welcomeScreen, mainMenu].forEach(s => s.classList.remove('active'));
+      historySection.classList.remove('active');
+      crackersSection.classList.remove('active');
+      if (screen === historySection || screen === crackersSection) {
+        screen.classList.add('active');
+      } else {
+        screen.classList.add('active');
+      }
+    }
+
+    // Diya interaction
+    const diya = document.getElementById('diya');
+    const flame = document.getElementById('flame');
+    let diyaLit = false;
+
+    diya.addEventListener('click', lightDiya);
+    diya.addEventListener('touchstart', (e) => { e.preventDefault(); lightDiya(); }, {passive: false});
+
+    function lightDiya() {
+      if (diyaLit) return;
+      diyaLit = true;
+      initAudio();
+      flame.classList.add('active');
+      // Soft whoosh
+      playBlastSound('sparkler');
+
+      setTimeout(() => {
+        diyaScreen.classList.remove('active');
+        setTimeout(() => {
+          welcomeScreen.classList.add('active');
+          // Animate welcome text
+          gsap.from('.welcome-content h1', { duration: 1.2, y: 40, opacity: 0, ease: 'power3.out' });
+          gsap.from('.welcome-content p', { duration: 1, y: 30, opacity: 0, delay: 0.3, ease: 'power3.out' });
+          gsap.from('#enter-btn', { duration: 0.8, scale: 0.8, opacity: 0, delay: 0.6, ease: 'back.out(1.7)' });
+        }, 400);
+      }, 1200);
+    }
+
+    document.getElementById('enter-btn').addEventListener('click', () => {
+      welcomeScreen.classList.remove('active');
+      setTimeout(() => {
+        mainMenu.classList.add('active');
+        gsap.from('.menu-card', { duration: 0.7, y: 50, opacity: 0, stagger: 0.15, ease: 'power3.out' });
+      }, 300);
+    });
+
+    // Navigation
+    document.getElementById('goto-history').addEventListener('click', () => {
+      mainMenu.classList.remove('active');
+      setTimeout(() => {
+        historySection.classList.add('active');
+        initHistoryAnimations();
+        startBgMusic();
+      }, 300);
+    });
+
+    document.getElementById('goto-crackers').addEventListener('click', () => {
+      mainMenu.classList.remove('active');
+      setTimeout(() => {
+        crackersSection.classList.add('active');
+        initCrackers();
+      }, 300);
+    });
+
+    document.getElementById('history-back').addEventListener('click', () => {
+      stopBgMusic();
+      historySection.classList.remove('active');
+      setTimeout(() => mainMenu.classList.add('active'), 200);
+    });
+
+    document.getElementById('crackers-back').addEventListener('click', () => {
+      crackersSection.classList.remove('active');
+      setTimeout(() => mainMenu.classList.add('active'), 200);
+    });
+
+    document.getElementById('music-toggle').addEventListener('click', () => {
+      if (musicPlaying) stopBgMusic();
+      else startBgMusic();
+    });
+
+    // ========== HISTORY GSAP ==========
+    let historyInited = false;
+    function initHistoryAnimations() {
+      if (historyInited) return;
+      historyInited = true;
+      gsap.registerPlugin(ScrollTrigger);
+
+      gsap.utils.toArray('.history-section-block').forEach((block, i) => {
+        gsap.to(block, {
+          opacity: 1,
+          y: 0,
+          duration: 1,
+          ease: 'power2.out',
+          scrollTrigger: {
+            trigger: block,
+            scroller: '#history-section',
+            start: 'top 80%',
+            toggleActions: 'play none none reverse'
+          }
+        });
+      });
+
+      // Subtle parallax on header
+      gsap.to('.history-header', {
+        y: -80,
+        ease: 'none',
+        scrollTrigger: {
+          trigger: '.history-content',
+          scroller: '#history-section',
+          start: 'top top',
+          end: 'bottom top',
+          scrub: true
+        }
+      });
+    }
+
+    // ========== CRACKERS ==========
+    const crackerTypes = [
+      { id: 'ladi', name: 'Ladi\nCrackers', icon: '🧨', type: 'normal' },
+      { id: 'rocket', name: 'Rocket', icon: '🚀', type: 'rocket' },
+      { id: 'chakri', name: 'Chakri', icon: '🌀', type: 'normal' },
+      { id: 'anaar', name: 'Anaar\n(Flowerpot)', icon: '🎆', type: 'sparkler' },
+      { id: 'sparkler', name: 'Sparkler', icon: '✨', type: 'sparkler' },
+      { id: 'bomb', name: 'Atom\nBomb', icon: '💣', type: 'normal' }
+    ];
+
+    function initCrackers() {
+      const select = document.getElementById('cracker-select');
+      select.innerHTML = '';
+      crackerTypes.forEach(c => {
+        const el = document.createElement('div');
+        el.className = 'cracker-item';
+        el.draggable = true;
+        el.dataset.type = c.type;
+        el.dataset.icon = c.icon;
+        el.innerHTML = `<div class="c-icon">${c.icon}</div><span>${c.name.replace('\\n','<br>')}</span>`;
+        // Drag events
+        el.addEventListener('dragstart', (e) => {
+          e.dataTransfer.setData('text/plain', JSON.stringify({ icon: c.icon, type: c.type }));
+          el.style.opacity = '0.5';
+        });
+        el.addEventListener('dragend', () => { el.style.opacity = '1'; });
+        // Touch support for mobile
+        el.addEventListener('touchstart', handleTouchStart, {passive: false});
+        select.appendChild(el);
+      });
+
+      const area = document.getElementById('burst-area');
+      area.addEventListener('dragover', (e) => { e.preventDefault(); area.classList.add('drag-over'); });
+      area.addEventListener('dragleave', () => area.classList.remove('drag-over'));
+      area.addEventListener('drop', (e) => {
+        e.preventDefault();
+        area.classList.remove('drag-over');
+        const data = JSON.parse(e.dataTransfer.getData('text/plain'));
+        const rect = area.getBoundingClientRect();
+        placeCracker(data.icon, data.type, e.clientX - rect.left, e.clientY - rect.top);
+      });
+
+      // Also allow click-to-place on mobile
+      let touchCracker = null;
+      function handleTouchStart(e) {
+        e.preventDefault();
+        const item = e.currentTarget;
+        touchCracker = {
+          icon: item.dataset.icon,
+          type: item.dataset.type
+        };
+        item.style.opacity = '0.5';
+        // Place at center on next tap in area
+        area.onclick = (ev) => {
+          if (!touchCracker) return;
+          const rect = area.getBoundingClientRect();
+          placeCracker(touchCracker.icon, touchCracker.type, ev.clientX - rect.left, ev.clientY - rect.top);
+          touchCracker = null;
+          document.querySelectorAll('.cracker-item').forEach(i => i.style.opacity = '1');
+          area.onclick = null;
+        };
+      }
+    }
+
+    function placeCracker(icon, type, x, y) {
+      const area = document.getElementById('burst-area');
+      document.getElementById('burst-hint').style.display = 'none';
+      const el = document.createElement('div');
+      el.className = 'placed-cracker';
+      el.textContent = icon;
+      el.style.left = (x - 40) + 'px';
+      el.style.top = (y - 40) + 'px';
+      el.dataset.type = type;
+      el.addEventListener('click', () => lightCracker(el));
+      area.appendChild(el);
+    }
+
+    function lightCracker(el) {
+      if (el.classList.contains('lighting')) return;
+      el.classList.add('lighting');
+      const type = el.dataset.type || 'normal';
+      const rect = el.getBoundingClientRect();
+      const areaRect = document.getElementById('burst-area').getBoundingClientRect();
+      const x = rect.left + rect.width/2 - areaRect.left;
+      const y = rect.top + rect.height/2 - areaRect.top;
+
+      // Small delay for fuse effect
+      setTimeout(() => {
+        playBlastSound(type);
+        createBlast(x, y, type);
+        el.remove();
+      }, type === 'sparkler' ? 200 : 400);
+    }
+
+    // Canvas particle blast
+    const canvas = document.getElementById('blast-canvas');
+    const ctx = canvas.getContext('2d');
+    let particles = [];
+    let animId = null;
+
+    function resizeCanvas() {
+      const area = document.getElementById('burst-area');
+      canvas.width = area.clientWidth;
+      canvas.height = area.clientHeight;
+    }
+    window.addEventListener('resize', resizeCanvas);
+
+    function createBlast(x, y, type) {
+      resizeCanvas();
+      const colors = type === 'rocket' 
+        ? ['#ff4444','#ffaa00','#ffff44','#ffffff']
+        : type === 'sparkler'
+        ? ['#ffdd44','#ffaa00','#ffffff','#ff8800']
+        : ['#ff6b00','#ffd700','#ff3333','#ff99cc','#44aaff','#ffffff'];
+
+      const count = type === 'sparkler' ? 80 : type === 'rocket' ? 100 : 60;
+      for (let i = 0; i < count; i++) {
+        const angle = Math.random() * Math.PI * 2;
+        const speed = type === 'sparkler' ? Math.random() * 3 + 1 : Math.random() * 8 + 2;
+        particles.push({
+          x, y,
+          vx: Math.cos(angle) * speed,
+          vy: Math.sin(angle) * speed,
+          life: 1,
+          decay: Math.random() * 0.02 + 0.01,
+          color: colors[Math.floor(Math.random() * colors.length)],
+          size: Math.random() * 3 + 1.5,
+          gravity: type === 'sparkler' ? 0.02 : 0.08
+        });
+      }
+      if (!animId) animateBlast();
+    }
+
+    function animateBlast() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      particles = particles.filter(p => {
+        p.x += p.vx;
+        p.y += p.vy;
+        p.vy += p.gravity;
+        p.life -= p.decay;
+        if (p.life <= 0) return false;
+        ctx.globalAlpha = p.life;
+        ctx.fillStyle = p.color;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.size * p.life, 0, Math.PI * 2);
+        ctx.fill();
+        // glow
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.size * p.life * 2, 0, Math.PI * 2);
+        ctx.fillStyle = p.color;
+        ctx.globalAlpha = p.life * 0.3;
+        ctx.fill();
+        return true;
+      });
+      ctx.globalAlpha = 1;
+      if (particles.length > 0) {
+        animId = requestAnimationFrame(animateBlast);
+      } else {
+        animId = null;
+      }
+    }
+
+    // Floating decoration diyas on menu
+    function addFloatingDiyas() {
+      const menu = document.getElementById('main-menu');
+      for (let i = 0; i < 8; i++) {
+        const d = document.createElement('div');
+        d.className = 'floating-diya';
+        d.textContent = '🪔';
+        d.style.left = Math.random() * 90 + 5 + '%';
+        d.style.top = Math.random() * 80 + 10 + '%';
+        d.style.animationDelay = Math.random() * 5 + 's';
+        d.style.fontSize = (1 + Math.random()) + 'rem';
+        menu.appendChild(d);
+      }
+    }
+    addFloatingDiyas();
+  </script>
+</body>
+</html>
